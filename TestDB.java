@@ -7,7 +7,7 @@ public class TestDB {
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) {
-                System.out.println("❌ Cannot connect to database!");
+                System.out.println("Cannot connect to database!");
                 return;
             }
             
@@ -49,10 +49,10 @@ public class TestDB {
             rs.close();
             stmt.close();
             
-            System.out.println("\n✅ Database test completed successfully!");
+            System.out.println("\nDatabase test completed successfully!");
             
         } catch (SQLException e) {
-            System.err.println("❌ Error: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
