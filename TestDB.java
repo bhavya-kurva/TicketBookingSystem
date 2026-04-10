@@ -11,7 +11,7 @@ public class TestDB {
                 return;
             }
             
-            // Test query 1: Get users
+            
             System.out.println("1. Fetching Users:");
             System.out.println("-------------------");
             Statement stmt = conn.createStatement();
@@ -28,7 +28,7 @@ public class TestDB {
                 System.out.println("   No users found");
             }
             
-            // Test query 2: Get trains
+            
             System.out.println("\n2. Fetching Trains:");
             System.out.println("-------------------");
             rs = stmt.executeQuery("SELECT * FROM trains");
