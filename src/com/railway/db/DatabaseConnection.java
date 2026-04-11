@@ -44,7 +44,6 @@ public class DatabaseConnection {
             System.out.println("JDBC URL: " + meta.getURL());
             System.out.println("-----------------------");
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
