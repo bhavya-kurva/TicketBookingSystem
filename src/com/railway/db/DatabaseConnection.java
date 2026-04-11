@@ -47,7 +47,8 @@ public class DatabaseConnection {
                 System.out.println("\nConnection successful!");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Database test failed!");
+            System.err.println("Error: " + e.getMessage());
         }
     }
 }
