@@ -10,11 +10,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
 
 public class SearchPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
     
     private JComboBox<String> fromCombo, toCombo;
     private JTable trainTable;
     private DefaultTableModel tableModel;
     private final TrainDAO trainDAO; 
+    private final User currentUser;
+    private List<Train> currentTrains;
     
     // Indian railway stations
     private final String[] stations = {"Delhi", "Mumbai", "Bangalore", "Chennai", 
@@ -22,6 +25,7 @@ public class SearchPanel extends JPanel {
                                  "Jaipur", "Lucknow", "Patna", "Bhopal"};
     
     public SearchPanel(User user) {
+        this.currentUser = user;
         this.trainDAO = new TrainDAO();
         initUI();
     }
@@ -73,7 +77,7 @@ public class SearchPanel extends JPanel {
         panel.add(toCombo, gbc);
         
         // Search Button
-        JButton searchBtn = new JButton("🔍 Search Trains");
+        JButton searchBtn = new JButton("Search Trains");
         searchBtn.setBackground(new Color(0, 102, 204));
         searchBtn.setForeground(Color.WHITE);
         searchBtn.setFont(new Font("Arial", Font.BOLD, 14));
@@ -130,11 +134,27 @@ public class SearchPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(trainTable);
         panel.add(scrollPane, BorderLayout.CENTER);
         
-        // Status label
+        // Bottom Action Panel
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        
         JLabel statusLabel = new JLabel("Enter source and destination to search trains");
         statusLabel.setForeground(new Color(108, 117, 125));
         statusLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panel.add(statusLabel, BorderLayout.SOUTH);
+        bottomPanel.add(statusLabel, BorderLayout.WEST);
+        
+        JButton bookBtn = new JButton("Book Selected Train");
+        bookBtn.setBackground(new Color(40, 167, 69));
+        bookBtn.setForeground(Color.WHITE);
+        bookBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        bookBtn.setFocusPainted(false);
+        bookBtn.addActionListener(e -> bookSelectedTrain());
+        
+        JPanel btnPanel = new JPanel();
+        btnPanel.setOpaque(false);
+        btnPanel.add(bookBtn);
+        bottomPanel.add(btnPanel, BorderLayout.EAST);
+        
+        panel.add(bottomPanel, BorderLayout.SOUTH);
         
         return panel;
     }
@@ -158,11 +178,11 @@ public class SearchPanel extends JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
         // Search trains
-        List<Train> trains = trainDAO.searchTrains(from, to);
+        currentTrains = trainDAO.searchTrains(from, to);
         
         setCursor(Cursor.getDefaultCursor());
         
-        if (trains.isEmpty()) {
+        if (currentTrains.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                 "No trains found from " + from + " to " + to + "\nPlease try different route.",
                 "No Results",
@@ -171,7 +191,7 @@ public class SearchPanel extends JPanel {
         }
         
         // Add rows to table
-        for (Train train : trains) {
+        for (Train train : currentTrains) {
             Object[] row = {
                 train.getTrainNumber(),
                 train.getTrainName(),
@@ -185,8 +205,53 @@ public class SearchPanel extends JPanel {
         
         // Show success message
         JOptionPane.showMessageDialog(this,
-            "Found " + trains.size() + " train(s) from " + from + " to " + to,
+            "Found " + currentTrains.size() + " train(s) from " + from + " to " + to,
             "Search Results",
             JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void bookSelectedTrain() {
+        if (currentTrains == null || currentTrains.isEmpty()) return;
+        
+        int selectedRow = trainTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a train from the table to book.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Train selectedTrain = currentTrains.get(selectedRow);
+        
+        String input = JOptionPane.showInputDialog(this, "Enter number of passengers (Available: " + selectedTrain.getSeatsAvailable() + "):", "Book Ticket", JOptionPane.QUESTION_MESSAGE);
+        if (input == null || input.trim().isEmpty()) return;
+        
+        try {
+            int passengers = Integer.parseInt(input.trim());
+            if (passengers <= 0) {
+                JOptionPane.showMessageDialog(this, "Number of passengers must be at least 1.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (passengers > selectedTrain.getSeatsAvailable()) {
+                JOptionPane.showMessageDialog(this, "Not enough seats available.", "Booking Failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            com.railway.dao.BookingDAO bookingDAO = new com.railway.dao.BookingDAO();
+            com.railway.model.Booking booking = new com.railway.model.Booking();
+            booking.setUserId(currentUser.getUserId());
+            booking.setTrainId(selectedTrain.getTrainId());
+            booking.setJourneyDate(new java.sql.Date(System.currentTimeMillis() + 86400000L)); // Tomorrow
+            booking.setPassengers(passengers);
+            booking.setTotalFare(passengers * selectedTrain.getFare());
+            
+            boolean success = bookingDAO.createBooking(booking);
+            if (success) {
+                JOptionPane.showMessageDialog(this, String.format("Ticket booked successfully! Total fare: ₹%.2f", booking.getTotalFare()), "Booking Success", JOptionPane.INFORMATION_MESSAGE);
+                searchTrains(); // Refresh table
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to book ticket. Please try again.", "Booking Failed", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

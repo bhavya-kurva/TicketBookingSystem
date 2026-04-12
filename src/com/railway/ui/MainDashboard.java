@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class MainDashboard extends JFrame {
+    private static final long serialVersionUID = 1L;
     
     private final User currentUser;
     private JPanel contentPanel;
@@ -111,7 +112,7 @@ public class MainDashboard extends JFrame {
         sidebar.add(Box.createVerticalStrut(20));
         
         // Menu buttons
-        JButton searchBtn = createMenuButton("🔍 Search Trains", "search");
+        JButton searchBtn = createMenuButton("Search Trains", "search");
         
         sidebar.add(searchBtn);
         sidebar.add(Box.createVerticalStrut(5));
