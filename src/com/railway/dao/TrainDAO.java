@@ -30,6 +30,7 @@ public class TrainDAO {
                     train.setToStation(rs.getString("to_station"));
                     train.setDepartureTime(rs.getString("departure_time"));
                     train.setArrivalTime(rs.getString("arrival_time"));
+                    train.setDuration(rs.getString("duration"));
                     train.setSeatsAvailable(rs.getInt("seats_available"));
                     train.setFare(rs.getDouble("fare"));
                     trains.add(train);
@@ -59,6 +60,7 @@ public class TrainDAO {
                     train.setToStation(rs.getString("to_station"));
                     train.setDepartureTime(rs.getString("departure_time"));
                     train.setArrivalTime(rs.getString("arrival_time"));
+                    train.setDuration(rs.getString("duration"));
                     train.setSeatsAvailable(rs.getInt("seats_available"));
                     train.setFare(rs.getDouble("fare"));
                     return train;

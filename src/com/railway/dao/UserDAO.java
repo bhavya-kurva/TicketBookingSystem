@@ -33,4 +33,32 @@ public class UserDAO {
         }
         return null;
     }
+
+    public boolean register(User user) {
+        String checkSql = "SELECT 1 FROM users WHERE username = ?";
+        String insertSql = "INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                return false;
+            }
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setString(1, user.getUsername());
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    return false;
+                }
+            }
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                insertStmt.setString(1, user.getUsername());
+                insertStmt.setString(2, user.getPassword());
+                insertStmt.setString(3, user.getFullName());
+                insertStmt.setString(4, user.getRole());
+                return insertStmt.executeUpdate() > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
