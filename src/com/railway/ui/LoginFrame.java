@@ -6,12 +6,10 @@ import java.awt.*;
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {
-    private static final long serialVersionUID = 1L;
     
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private JButton loginButton;
-    private final UserDAO userDAO;
+    private UserDAO userDAO;
     
     public LoginFrame() {
         userDAO = new UserDAO();
@@ -20,12 +18,12 @@ public class LoginFrame extends JFrame {
     
     private void initUI() {
         setTitle("Railway Ticket Booking System");
-        setSize(450, 380);
+        setSize(450, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         
-        // Main panel with gradient background
+        // Main Panel with Gradient Background
         JPanel mainPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -43,13 +41,20 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         
         // Title
-        JLabel titleLabel = new JLabel("Railway Ticket Booking System");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        JLabel titleLabel = new JLabel("RAILWAY TICKET BOOKING SYSTEM");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         titleLabel.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         mainPanel.add(titleLabel, gbc);
+        
+        // Subtitle
+        JLabel subtitle = new JLabel("Book Your Train Tickets Online");
+        subtitle.setFont(new Font("Arial", Font.PLAIN, 12));
+        subtitle.setForeground(Color.LIGHT_GRAY);
+        gbc.gridy = 1;
+        mainPanel.add(subtitle, gbc);
         
         // Login Panel
         JPanel loginPanel = new JPanel(new GridBagLayout());
@@ -59,9 +64,19 @@ public class LoginFrame extends JFrame {
         GridBagConstraints lgbc = new GridBagConstraints();
         lgbc.insets = new Insets(10, 10, 10, 10);
         
-        // Username
+        // Login Label
+        JLabel loginLabel = new JLabel("LOGIN");
+        loginLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        loginLabel.setForeground(new Color(0, 51, 102));
         lgbc.gridx = 0;
         lgbc.gridy = 0;
+        lgbc.gridwidth = 2;
+        loginPanel.add(loginLabel, lgbc);
+        
+        // Username
+        lgbc.gridwidth = 1;
+        lgbc.gridy = 1;
+        lgbc.gridx = 0;
         loginPanel.add(new JLabel("Username:"), lgbc);
         
         usernameField = new JTextField(15);
@@ -71,7 +86,7 @@ public class LoginFrame extends JFrame {
         
         // Password
         lgbc.gridx = 0;
-        lgbc.gridy = 1;
+        lgbc.gridy = 2;
         loginPanel.add(new JLabel("Password:"), lgbc);
         
         passwordField = new JPasswordField(15);
@@ -79,21 +94,37 @@ public class LoginFrame extends JFrame {
         lgbc.gridx = 1;
         loginPanel.add(passwordField, lgbc);
         
-        // Login Button
-        loginButton = new JButton("Login");
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        
+        JButton loginButton = new JButton("LOGIN");
         loginButton.setBackground(new Color(0, 102, 204));
-        loginButton.setForeground(Color.BLACK);
+        loginButton.setForeground(Color.WHITE);
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         loginButton.setFocusPainted(false);
+        loginButton.setPreferredSize(new Dimension(100, 35));
         loginButton.addActionListener(e -> doLogin());
         
-        lgbc.gridx = 0;
-        lgbc.gridy = 2;
-        lgbc.gridwidth = 2;
-        loginPanel.add(loginButton, lgbc);
+        JButton registerButton = new JButton("REGISTER");
+        registerButton.setBackground(new Color(34, 139, 34));
+        registerButton.setForeground(Color.WHITE);
+        registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+        registerButton.setFocusPainted(false);
+        registerButton.setPreferredSize(new Dimension(100, 35));
+        registerButton.addActionListener(e -> {
+            new RegisterFrame().setVisible(true);
+            dispose();
+        });
         
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        buttonPanel.add(loginButton);
+        buttonPanel.add(registerButton);
+        
+        lgbc.gridx = 0;
+        lgbc.gridy = 3;
+        lgbc.gridwidth = 2;
+        loginPanel.add(buttonPanel, lgbc);
+        
+        gbc.gridy = 2;
         mainPanel.add(loginPanel, gbc);
         
         add(mainPanel);
@@ -113,34 +144,25 @@ public class LoginFrame extends JFrame {
             return;
         }
         
-        loginButton.setText("Logging in...");
-        loginButton.setEnabled(false);
-        
         User user = userDAO.login(username, password);
         
         if (user != null) {
             JOptionPane.showMessageDialog(this,
                 "Welcome " + user.getFullName() + "!",
-                "Login Successful",
-                JOptionPane.INFORMATION_MESSAGE);
-            
+                "Login Successful", JOptionPane.INFORMATION_MESSAGE);
             new MainDashboard(user).setVisible(true);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this,
-                "Invalid username or password!\n\nTry: admin / admin123",
-                "Login Failed",
-                JOptionPane.ERROR_MESSAGE);
-            loginButton.setText("Login");
-            loginButton.setEnabled(true);
+                "Invalid username or password!\nTry: raj / raj123",
+                "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {}
-        
+        } catch (Exception e) {}
         new LoginFrame().setVisible(true);
     }
 }

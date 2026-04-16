@@ -1,6 +1,7 @@
 package com.railway.dao;
 import com.railway.db.DatabaseConnection;
 import com.railway.model.Booking;
+import com.railway.model.Passenger;
 import com.railway.model.Train;
 import java.sql.*;
 import java.util.*;
@@ -18,6 +19,10 @@ public class BookingDAO {
     
     
     public boolean createBooking(Booking booking) {
+        return createBooking(booking, Collections.emptyList());
+    }
+
+    public boolean createBooking(Booking booking, List<Passenger> passengers) {
         String pnr = generatePNR();
         String sql = "INSERT INTO bookings (pnr, user_id, train_id, journey_date, " +
                      "passengers, total_fare, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -28,7 +33,8 @@ public class BookingDAO {
         }
         try {
             conn.setAutoCommit(false);
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            booking.setPnr(pnr);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setString(1, pnr);
                 pstmt.setInt(2, booking.getUserId());
                 pstmt.setInt(3, booking.getTrainId());
@@ -39,6 +45,11 @@ public class BookingDAO {
                 if (pstmt.executeUpdate() <= 0) {
                     conn.rollback();
                     return false;
+                }
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        booking.setBookingId(generatedKeys.getInt(1));
+                    }
                 }
             }
             if (!trainDAO.updateSeatAvailability(conn, booking.getTrainId(), booking.getPassengers())) {
@@ -86,7 +97,7 @@ public class BookingDAO {
                     booking.setJourneyDate(rs.getDate("journey_date"));
                     booking.setPassengers(rs.getInt("passengers"));
                     booking.setTotalFare(rs.getDouble("total_fare"));
-                    booking.setBookingDate(rs.getDate("booking_date"));
+                    booking.setBookingDate(rs.getTimestamp("booking_date"));
                     booking.setStatus(rs.getString("status"));
                     
                     Train train = trainDAO.getTrainById(booking.getTrainId());

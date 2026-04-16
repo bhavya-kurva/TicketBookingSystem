@@ -5,11 +5,10 @@ import java.awt.*;
 import javax.swing.*;
 
 public class MainDashboard extends JFrame {
-    private static final long serialVersionUID = 1L;
     
-    private final User currentUser;
-    private JPanel contentPanel;
+    private User currentUser;
     private CardLayout cardLayout;
+    private JPanel contentPanel;
     
     public MainDashboard(User user) {
         this.currentUser = user;
@@ -17,29 +16,45 @@ public class MainDashboard extends JFrame {
     }
     
     private void initUI() {
-        setTitle("Railway Ticket Booking System - Welcome " + currentUser.getFullName());
-        setSize(1100, 700);
+        setTitle("Railway Booking System - Welcome " + currentUser.getFullName());
+        setSize(1200, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
         setLayout(new BorderLayout());
         
-        // Create menu bar
+        // Create Menu Bar
         createMenuBar();
         
-        // Create sidebar
+        // Create Sidebar
         JPanel sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
         
-        // Content panel with CardLayout
+        // Content Panel with CardLayout
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(new Color(245, 245, 245));
         
-        // Add panels
-        contentPanel.add(new SearchPanel (currentUser), "search");
+        // Add all panels
+        SearchPanel searchPanel = new SearchPanel(currentUser);
+        BookingPanel bookingPanel = new BookingPanel(currentUser);
+        
+        contentPanel.add(searchPanel, "search");
+        contentPanel.add(bookingPanel, "booking");
         
         add(contentPanel, BorderLayout.CENTER);
+        
+        // Status Bar
+        JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusBar.setBackground(new Color(44, 62, 80));
+        statusBar.setPreferredSize(new Dimension(getWidth(), 30));
+        
+        JLabel statusLabel = new JLabel("Connected to Railway Database  |  User: " + currentUser.getFullName());
+        statusLabel.setForeground(Color.WHITE);
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        statusBar.add(statusLabel);
+        
+        add(statusBar, BorderLayout.SOUTH);
         
         // Show search panel by default
         cardLayout.show(contentPanel, "search");
@@ -67,12 +82,6 @@ public class MainDashboard extends JFrame {
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
         
-        // Add welcome message
-        JLabel welcomeLabel = new JLabel(" Welcome, " + currentUser.getFullName() + " | Role: " + currentUser.getRole());
-        welcomeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        menuBar.add(Box.createHorizontalGlue());
-        menuBar.add(welcomeLabel);
-        
         setJMenuBar(menuBar);
     }
     
@@ -80,16 +89,16 @@ public class MainDashboard extends JFrame {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(new Color(44, 62, 80));
-        sidebar.setPreferredSize(new Dimension(220, getHeight()));
+        sidebar.setPreferredSize(new Dimension(250, getHeight()));
         
-        // User info panel
+        // User Profile Section
         JPanel userPanel = new JPanel();
         userPanel.setBackground(new Color(52, 73, 94));
         userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.Y_AXIS));
         userPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         
         JLabel userIcon = new JLabel("👤");
-        userIcon.setFont(new Font("Segoe UI", Font.PLAIN, 40));
+        userIcon.setFont(new Font("Segoe UI", Font.PLAIN, 50));
         userIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel userName = new JLabel(currentUser.getFullName());
@@ -97,7 +106,7 @@ public class MainDashboard extends JFrame {
         userName.setFont(new Font("Segoe UI", Font.BOLD, 14));
         userName.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        JLabel userRole = new JLabel(currentUser.getRole().toUpperCase());
+        JLabel userRole = new JLabel("Passenger");
         userRole.setForeground(new Color(189, 195, 199));
         userRole.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         userRole.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -111,12 +120,22 @@ public class MainDashboard extends JFrame {
         sidebar.add(userPanel);
         sidebar.add(Box.createVerticalStrut(20));
         
-        // Menu buttons
-        JButton searchBtn = createMenuButton("Search Trains", "search");
+        // Menu Buttons
+        JButton searchBtn = createMenuButton("SEARCH TRAINS", "search");
+        JButton bookBtn = createMenuButton("BOOK TICKET", "booking");
+        JButton logoutBtn = createMenuButton("LOGOUT", null);
         
         sidebar.add(searchBtn);
-        sidebar.add(Box.createVerticalStrut(5));
+        sidebar.add(Box.createVerticalStrut(10));
+        sidebar.add(bookBtn);
+        sidebar.add(Box.createVerticalStrut(10));
         sidebar.add(Box.createVerticalGlue());
+        sidebar.add(logoutBtn);
+        
+        // Button Actions
+        searchBtn.addActionListener(e -> cardLayout.show(contentPanel, "search"));
+        bookBtn.addActionListener(e -> cardLayout.show(contentPanel, "booking"));
+        logoutBtn.addActionListener(e -> logout());
         
         return sidebar;
     }
@@ -124,26 +143,22 @@ public class MainDashboard extends JFrame {
     private JButton createMenuButton(String text, String cardName) {
         JButton btn = new JButton(text);
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setMaximumSize(new Dimension(200, 45));
+        btn.setMaximumSize(new Dimension(220, 45));
         btn.setBackground(new Color(52, 73, 94));
         btn.setForeground(Color.WHITE);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn.setBackground(new Color(41, 128, 185));
             }
-            @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn.setBackground(new Color(52, 73, 94));
             }
         });
-        
-        btn.addActionListener(e -> cardLayout.show(contentPanel, cardName));
         
         return btn;
     }
@@ -151,8 +166,7 @@ public class MainDashboard extends JFrame {
     private void logout() {
         int confirm = JOptionPane.showConfirmDialog(this,
             "Are you sure you want to logout?",
-            "Logout",
-            JOptionPane.YES_NO_OPTION);
+            "Logout", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
             new LoginFrame().setVisible(true);
@@ -162,15 +176,17 @@ public class MainDashboard extends JFrame {
     
     private void showAbout() {
         JOptionPane.showMessageDialog(this,
-            """
-            Railway Ticket Booking System
-            Version 1.0
-            
-            A comprehensive railway reservation system
-            Developed for academic project
-            
-            © 2024 All Rights Reserved""",
-            "About",
-            JOptionPane.INFORMATION_MESSAGE);
+            "RAILWAY TICKET BOOKING SYSTEM\n\n" +
+            "Version: 1.0\n" +
+            "Developer: Railway Team\n\n" +
+            "Features:\n" +
+            "- User Registration & Login\n" +
+            "- Train Search\n" +
+            "- Ticket Booking\n" +
+            "- Passenger Details\n" +
+            "- PNR Generation\n\n" +
+            "© 2024 All Rights Reserved",
+            "About", JOptionPane.INFORMATION_MESSAGE);
     }
 }
+       
