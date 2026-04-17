@@ -2,8 +2,8 @@ package com.railway.ui;
 
 import com.railway.dao.UserDAO;
 import com.railway.model.User;
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class RegisterFrame extends JFrame {
     
@@ -23,7 +23,7 @@ public class RegisterFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         
-        // Main Panel
+       
         JPanel mainPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -40,7 +40,7 @@ public class RegisterFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         
-        // Title
+        
         JLabel title = new JLabel("CREATE NEW ACCOUNT");
         title.setFont(new Font("Arial", Font.BOLD, 18));
         title.setForeground(Color.WHITE);
@@ -49,7 +49,7 @@ public class RegisterFrame extends JFrame {
         gbc.gridwidth = 2;
         mainPanel.add(title, gbc);
         
-        // Form Panel
+        
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -57,7 +57,7 @@ public class RegisterFrame extends JFrame {
         GridBagConstraints fgbc = new GridBagConstraints();
         fgbc.insets = new Insets(10, 10, 10, 10);
         
-        // Full Name
+        
         fgbc.gridx = 0;
         fgbc.gridy = 0;
         formPanel.add(new JLabel("Full Name:"), fgbc);
@@ -67,7 +67,7 @@ public class RegisterFrame extends JFrame {
         fgbc.gridx = 1;
         formPanel.add(nameField, fgbc);
         
-        // Username
+        
         fgbc.gridx = 0;
         fgbc.gridy = 1;
         formPanel.add(new JLabel("Username:"), fgbc);
@@ -77,7 +77,7 @@ public class RegisterFrame extends JFrame {
         fgbc.gridx = 1;
         formPanel.add(usernameField, fgbc);
         
-        // Password
+        
         fgbc.gridx = 0;
         fgbc.gridy = 2;
         formPanel.add(new JLabel("Password:"), fgbc);
@@ -87,25 +87,29 @@ public class RegisterFrame extends JFrame {
         fgbc.gridx = 1;
         formPanel.add(passwordField, fgbc);
         
-        // Buttons
+        
         JPanel buttonPanel = new JPanel(new FlowLayout());
         
         JButton registerBtn = new JButton("REGISTER");
-        registerBtn.setBackground(new Color(34, 139, 34));
+        registerBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        registerBtn.setBackground(new Color(0, 70, 140));
         registerBtn.setForeground(Color.WHITE);
-        registerBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        registerBtn.setFont(new Font("Arial", Font.BOLD, 12));
         registerBtn.setPreferredSize(new Dimension(100, 35));
         registerBtn.addActionListener(e -> doRegister());
+        applyHover(registerBtn, new Color(0, 70, 140), new Color(0, 51, 102));
         
         JButton cancelBtn = new JButton("CANCEL");
-        cancelBtn.setBackground(new Color(108, 117, 125));
+        cancelBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        cancelBtn.setBackground(new Color(0, 70, 140));
         cancelBtn.setForeground(Color.WHITE);
-        cancelBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        cancelBtn.setFont(new Font("Arial", Font.BOLD, 12));
         cancelBtn.setPreferredSize(new Dimension(100, 35));
         cancelBtn.addActionListener(e -> {
             new LoginFrame().setVisible(true);
             dispose();
         });
+        applyHover(cancelBtn, new Color(0, 70, 140), new Color(0, 51, 102));
         
         buttonPanel.add(registerBtn);
         buttonPanel.add(cancelBtn);
@@ -121,6 +125,19 @@ public class RegisterFrame extends JFrame {
         add(mainPanel);
     }
     
+    private void applyHover(JButton button, Color base, Color hover) {
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hover);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(base);
+            }
+        });
+    }
+
     private void doRegister() {
         String fullName = nameField.getText().trim();
         String username = usernameField.getText().trim();

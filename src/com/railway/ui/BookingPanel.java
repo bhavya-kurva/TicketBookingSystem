@@ -40,17 +40,17 @@ public class BookingPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Header
+        
         JLabel header = new JLabel("Book Your Ticket", SwingConstants.CENTER);
         header.setFont(new Font("Arial", Font.BOLD, 24));
         header.setForeground(new Color(0, 102, 204));
         add(header, BorderLayout.NORTH);
         
-        // Main Form Panel
+        
         JPanel formPanel = createFormPanel();
         add(formPanel, BorderLayout.CENTER);
         
-        // Button Panel
+        
         JPanel buttonPanel = createButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -61,7 +61,7 @@ public class BookingPanel extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Train Info Panel
+       
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(0, 102, 204)),
@@ -79,7 +79,7 @@ public class BookingPanel extends JPanel {
         gbc.gridwidth = 2;
         panel.add(infoPanel, gbc);
         
-        // Journey Date
+        
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
@@ -87,23 +87,23 @@ public class BookingPanel extends JPanel {
         
         dateField = new JTextField(LocalDate.now().plusDays(1).toString());
         dateField.setFont(new Font("Arial", Font.PLAIN, 14));
-        dateField.setPreferredSize(new Dimension(150, 30));
-        gbc.gridx = 1;
+        dateField.setPreferredSize(new Dimension(560, 30));
+        gbc.gridx = 10;
         panel.add(dateField, gbc);
         
-        // Number of Passengers
+        
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("Number of Passengers:"), gbc);
         
         passengerSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 6, 1));
         passengerSpinner.setFont(new Font("Arial", Font.PLAIN, 14));
-        passengerSpinner.setPreferredSize(new Dimension(80, 30));
+        passengerSpinner.setPreferredSize(new Dimension(800, 30));
         passengerSpinner.addChangeListener(e -> updatePassengerTable());
         gbc.gridx = 1;
         panel.add(passengerSpinner, gbc);
         
-        // Passenger Details Table
+
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
@@ -119,13 +119,13 @@ public class BookingPanel extends JPanel {
         passengerTable.setFont(new Font("Arial", Font.PLAIN, 13));
         passengerTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
         
-        // Set column widths
+
         passengerTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         passengerTable.getColumnModel().getColumn(1).setPreferredWidth(200);
         passengerTable.getColumnModel().getColumn(2).setPreferredWidth(80);
         passengerTable.getColumnModel().getColumn(3).setPreferredWidth(100);
         
-        // Gender combo box editor
+        
         JComboBox<String> genderCombo = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         passengerTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(genderCombo));
         
@@ -133,7 +133,7 @@ public class BookingPanel extends JPanel {
         
         panel.add(tablePanel, gbc);
         
-        // Fare Panel
+       
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weighty = 0;
@@ -169,25 +169,42 @@ public class BookingPanel extends JPanel {
         panel.setBackground(Color.WHITE);
         
         JButton confirmBtn = new JButton("CONFIRM BOOKING");
-        confirmBtn.setBackground(new Color(40, 167, 69));
+        confirmBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        confirmBtn.setBackground(new Color(0, 70, 140));
         confirmBtn.setForeground(Color.WHITE);
         confirmBtn.setFont(new Font("Arial", Font.BOLD, 14));
         confirmBtn.setPreferredSize(new Dimension(180, 45));
         confirmBtn.setFocusPainted(false);
         confirmBtn.addActionListener(e -> confirmBooking());
+        applyHover(confirmBtn, new Color(0, 70, 140), new Color(0, 51, 102));
         
         JButton clearBtn = new JButton("CLEAR");
-        clearBtn.setBackground(new Color(108, 117, 125));
+        clearBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        clearBtn.setBackground(new Color(0, 70, 140));
         clearBtn.setForeground(Color.WHITE);
         clearBtn.setFont(new Font("Arial", Font.BOLD, 14));
         clearBtn.setPreferredSize(new Dimension(120, 45));
         clearBtn.setFocusPainted(false);
         clearBtn.addActionListener(e -> clearForm());
+        applyHover(clearBtn, new Color(0, 70, 140), new Color(0, 51, 102));
         
         panel.add(confirmBtn);
         panel.add(clearBtn);
         
         return panel;
+    }
+
+    private void applyHover(JButton button, Color base, Color hover) {
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hover);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(base);
+            }
+        });
     }
     
     private void updateTrainInfo() {
@@ -227,7 +244,7 @@ public class BookingPanel extends JPanel {
     }
     
     private void confirmBooking() {
-        // Validation
+
         if (selectedTrain == null) {
             JOptionPane.showMessageDialog(this, 
                 "Please select a train from Search Trains first!",
@@ -235,7 +252,7 @@ public class BookingPanel extends JPanel {
             return;
         }
         
-        // Validate date
+        
         String dateStr = dateField.getText().trim();
         Date journeyDate;
         try {
@@ -253,7 +270,7 @@ public class BookingPanel extends JPanel {
             return;
         }
         
-        // Collect passenger details
+        
         int passengerCount = (Integer) passengerSpinner.getValue();
         List<Passenger> passengers = new ArrayList<>();
         
@@ -270,7 +287,7 @@ public class BookingPanel extends JPanel {
                 return;
             }
             
-            // Validate age
+            
             int age;
             try {
                 age = Integer.parseInt(ageStr);
@@ -292,7 +309,7 @@ public class BookingPanel extends JPanel {
         
         double totalFare = selectedTrain.getFare() * passengerCount;
         
-        // Create booking object
+        
         Booking booking = new Booking();
         booking.setUserId(currentUser.getUserId());
         booking.setTrainId(selectedTrain.getTrainId());
@@ -302,7 +319,7 @@ public class BookingPanel extends JPanel {
         booking.setTotalFare(totalFare);
         booking.setPassengers(passengerCount);
         
-        // Show confirmation dialog
+        
         int confirm = JOptionPane.showConfirmDialog(this,
             "---------------------------------------\n" +
             "          CONFIRM BOOKING DETAILS\n" +
@@ -318,7 +335,7 @@ public class BookingPanel extends JPanel {
             "Confirm Booking", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         
         if (confirm == JOptionPane.YES_OPTION) {
-            // Show loading
+            
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             
             boolean success = bookingDAO.createBooking(booking, passengers);

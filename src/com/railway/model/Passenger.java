@@ -16,7 +16,7 @@ public class Passenger {
         this.gender = gender;
     }
     
-    // Getters and Setters
+    
     public int getPassengerId() { return passengerId; }
     public void setPassengerId(int passengerId) { this.passengerId = passengerId; }
     

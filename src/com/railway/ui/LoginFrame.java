@@ -23,7 +23,7 @@ public class LoginFrame extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         
-        // Main Panel with Gradient Background
+        
         JPanel mainPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -40,7 +40,7 @@ public class LoginFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         
-        // Title
+        
         JLabel titleLabel = new JLabel("RAILWAY TICKET BOOKING SYSTEM");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         titleLabel.setForeground(Color.WHITE);
@@ -49,14 +49,14 @@ public class LoginFrame extends JFrame {
         gbc.gridwidth = 2;
         mainPanel.add(titleLabel, gbc);
         
-        // Subtitle
+        
         JLabel subtitle = new JLabel("Book Your Train Tickets Online");
         subtitle.setFont(new Font("Arial", Font.PLAIN, 12));
         subtitle.setForeground(Color.LIGHT_GRAY);
         gbc.gridy = 1;
         mainPanel.add(subtitle, gbc);
         
-        // Login Panel
+        
         JPanel loginPanel = new JPanel(new GridBagLayout());
         loginPanel.setBackground(new Color(255, 255, 255, 240));
         loginPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -64,7 +64,7 @@ public class LoginFrame extends JFrame {
         GridBagConstraints lgbc = new GridBagConstraints();
         lgbc.insets = new Insets(10, 10, 10, 10);
         
-        // Login Label
+
         JLabel loginLabel = new JLabel("LOGIN");
         loginLabel.setFont(new Font("Arial", Font.BOLD, 16));
         loginLabel.setForeground(new Color(0, 51, 102));
@@ -73,7 +73,7 @@ public class LoginFrame extends JFrame {
         lgbc.gridwidth = 2;
         loginPanel.add(loginLabel, lgbc);
         
-        // Username
+        
         lgbc.gridwidth = 1;
         lgbc.gridy = 1;
         lgbc.gridx = 0;
@@ -84,7 +84,7 @@ public class LoginFrame extends JFrame {
         lgbc.gridx = 1;
         loginPanel.add(usernameField, lgbc);
         
-        // Password
+        
         lgbc.gridx = 0;
         lgbc.gridy = 2;
         loginPanel.add(new JLabel("Password:"), lgbc);
@@ -94,27 +94,35 @@ public class LoginFrame extends JFrame {
         lgbc.gridx = 1;
         loginPanel.add(passwordField, lgbc);
         
-        // Buttons
+        
         JPanel buttonPanel = new JPanel(new FlowLayout());
         
         JButton loginButton = new JButton("LOGIN");
-        loginButton.setBackground(new Color(0, 102, 204));
+        loginButton.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        loginButton.setBackground(new Color(0, 70, 140));
         loginButton.setForeground(Color.WHITE);
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+        loginButton.setFont(new Font("Arial", Font.BOLD, 12));
         loginButton.setFocusPainted(false);
         loginButton.setPreferredSize(new Dimension(100, 35));
+        loginButton.setOpaque(true);
+        loginButton.setContentAreaFilled(true);
         loginButton.addActionListener(e -> doLogin());
+        applyHover(loginButton, new Color(0, 70, 140), new Color(0, 51, 102));
         
         JButton registerButton = new JButton("REGISTER");
-        registerButton.setBackground(new Color(34, 139, 34));
+        registerButton.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        registerButton.setBackground(new Color(0, 70, 140));
         registerButton.setForeground(Color.WHITE);
-        registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+        registerButton.setFont(new Font("Arial", Font.BOLD, 12));
         registerButton.setFocusPainted(false);
         registerButton.setPreferredSize(new Dimension(100, 35));
+        registerButton.setOpaque(true);
+        registerButton.setContentAreaFilled(true);
         registerButton.addActionListener(e -> {
             new RegisterFrame().setVisible(true);
             dispose();
         });
+        applyHover(registerButton, new Color(0, 70, 140), new Color(0, 51, 102));
         
         buttonPanel.add(loginButton);
         buttonPanel.add(registerButton);
@@ -129,10 +137,23 @@ public class LoginFrame extends JFrame {
         
         add(mainPanel);
         
-        // Enter key triggers login
+
         getRootPane().setDefaultButton(loginButton);
     }
     
+    private void applyHover(JButton button, Color base, Color hover) {
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hover);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(base);
+            }
+        });
+    }
+
     private void doLogin() {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());

@@ -10,7 +10,7 @@ import java.util.*;
 public class BookingDAO {
     private TrainDAO trainDAO = new TrainDAO();
 
-    // Generate unique PNR
+    
     private String generatePNR() {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String random = String.format("%04d", new Random().nextInt(10000));
@@ -76,7 +76,7 @@ public class BookingDAO {
         }
     }
     
-    // Get booking by PNR
+    
     public Booking getBookingByPNR(String pnr) {
         String sql = "SELECT * FROM bookings WHERE pnr = ?";
         

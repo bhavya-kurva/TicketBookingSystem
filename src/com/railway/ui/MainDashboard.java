@@ -23,19 +23,19 @@ public class MainDashboard extends JFrame {
         
         setLayout(new BorderLayout());
         
-        // Create Menu Bar
+        
         createMenuBar();
         
-        // Create Sidebar
+        
         JPanel sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
         
-        // Content Panel with CardLayout
+        
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(new Color(245, 245, 245));
         
-        // Add all panels
+        
         SearchPanel searchPanel = new SearchPanel(currentUser);
         BookingPanel bookingPanel = new BookingPanel(currentUser);
         
@@ -44,7 +44,7 @@ public class MainDashboard extends JFrame {
         
         add(contentPanel, BorderLayout.CENTER);
         
-        // Status Bar
+        
         JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         statusBar.setBackground(new Color(44, 62, 80));
         statusBar.setPreferredSize(new Dimension(getWidth(), 30));
@@ -56,7 +56,7 @@ public class MainDashboard extends JFrame {
         
         add(statusBar, BorderLayout.SOUTH);
         
-        // Show search panel by default
+        
         cardLayout.show(contentPanel, "search");
     }
     
@@ -91,7 +91,7 @@ public class MainDashboard extends JFrame {
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, getHeight()));
         
-        // User Profile Section
+        
         JPanel userPanel = new JPanel();
         userPanel.setBackground(new Color(52, 73, 94));
         userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.Y_AXIS));
@@ -120,7 +120,7 @@ public class MainDashboard extends JFrame {
         sidebar.add(userPanel);
         sidebar.add(Box.createVerticalStrut(20));
         
-        // Menu Buttons
+        
         JButton searchBtn = createMenuButton("SEARCH TRAINS", "search");
         JButton bookBtn = createMenuButton("BOOK TICKET", "booking");
         JButton logoutBtn = createMenuButton("LOGOUT", null);
@@ -132,7 +132,7 @@ public class MainDashboard extends JFrame {
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(logoutBtn);
         
-        // Button Actions
+        
         searchBtn.addActionListener(e -> cardLayout.show(contentPanel, "search"));
         bookBtn.addActionListener(e -> cardLayout.show(contentPanel, "booking"));
         logoutBtn.addActionListener(e -> logout());
@@ -142,9 +142,10 @@ public class MainDashboard extends JFrame {
     
     private JButton createMenuButton(String text, String cardName) {
         JButton btn = new JButton(text);
+        btn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.setMaximumSize(new Dimension(220, 45));
-        btn.setBackground(new Color(52, 73, 94));
+        btn.setBackground(new Color(0, 70, 140));
         btn.setForeground(Color.WHITE);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -153,10 +154,10 @@ public class MainDashboard extends JFrame {
         
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(41, 128, 185));
+                btn.setBackground(new Color(24, 24, 24));
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(52, 73, 94));
+                btn.setBackground(new Color(34, 34, 34));
             }
         });
         
