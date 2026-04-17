@@ -6,10 +6,7 @@ import com.railway.model.User;
 import java.sql.*;
 import java.util.List;
 
-/**
- * Console demo: raw SQL + DAO usage. Run with MySQL and Connector/J on classpath
- * (see run-TestDB.ps1).
- */
+
 public class TestDB {
 
     private static void printSection(String title) {
